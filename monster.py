@@ -1,5 +1,6 @@
 import random
 #나중에 합치면서 없애면 될 것 같아요.
+# monster_list = [Monster("고블린", 100, 10), Monster("트롤", 200, 20)]
 
 class Character:
     def __init__(self, name, hp=100, power=1, normal_attack=50):
@@ -37,6 +38,7 @@ class Monster(Character):
     # 가능하면 여러 가지 스킬 구현.
     def __init__(self, game_difficulty, floor_level): #normal attack 제거 job도 일단 제거
         # 이름, hp, power, 일반 공격, 직업
+        # 따로 함수로..고민중!()
         monster_name =''
         named_monster_flag = 0 #네임드 몬스터 결정하는 flag
         name_named_monster_list = ['우두머리', '대장']
@@ -73,7 +75,7 @@ class Monster(Character):
         # self.job = job
         self.alive = True
 
-
+    # Character class에 추가 예정!
     def normal_attack(self, other):
         damage = random.randint(self.power - 2, self.power + 2)
         other.hp = max(other.hp - damage, 0)
@@ -84,6 +86,7 @@ class Monster(Character):
             print(f"{other.name}이(가) 쓰러졌습니다.")
 
     def skill_attack(self, other, skill_type):
+        # 랜덤 추가 고려중!~~~^ㅇ^
         if skill_type == 1: # 1은 약한 스킬 2는 강한 스킬 3은 회복. 3이 획복이라면 함수 이름 변경 필요할 듯.
             damage = random.randint(self.power, self.power*2+1) #데미지가 power ~ power*2
             if self.mp < 10:
