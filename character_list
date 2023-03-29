@@ -1,0 +1,7 @@
+character_list = {
+    'Warrior': Job(character='Warrior', name="전사"),
+    'Wizard': Job(character='Wizard', name="마법사"),
+    'Archer': Job(character='Archer', name="궁수"),
+    'Tanker': Job(character='Tanker', name="탱커"),
+    'Healer': Job(character='Healer', name="힐러"),
+            }
