@@ -1,6 +1,7 @@
 import random
 #나중에 합치면서 없애면 될 것 같아요.
 # monster_list = [Monster("고블린", 100, 10), Monster("트롤", 200, 20)]
+# 기호님 너무 멋져요!! 코드 너무 좋아요ㅜㅜ 밸런스도 신경 쓰신 거 같아서 너무 완벽합니닷^ㅇ^ 조금만 더 화이팅 해봐용! - 묭
 
 class Character:
     def __init__(self, name, hp=100, power=1, normal_attack=50):

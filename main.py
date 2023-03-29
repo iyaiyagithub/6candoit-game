@@ -1,31 +1,40 @@
-from random import randint
+import random
+import sys
 # import Job as j
 
 # 플레이어, 몬스터 부모 클래스
 # 민경님
 class Character:
-    def __init__(self, name, hp=100, power=1, normal_attack=50):
+    def __init__(self, name, hp=100, normal_power=100, mp=50):
         # 이름, hp, power, 일반 공격, 직업
         self.name = name
         self.max_hp = 100
-        self.hp = hp
-        self.power = power
-        self.normal_attack = normal_attack
+        self.hp = max(hp, 0)
+        self.mp = mp
+        self.normal_power = normal_power
         self.character = []  # 캐릭터 리스트 -> 유저, 몬스터 둘다 사용 가능??
         self.alive = True
+        self.die_character = []  # 죽은 캐릭터 모음,, -> self.character랑 같아 지면 게임 종료
 
     def show_status(self):
-        # 스탯 확인 코드
-        print(f"나는 스탯 확인 칸입니다!!!\n")
+        print(f"{self.name}의 정보 hp : {self.hp} / {self.max_hp}")
         pass
+
+    # 내가 조아하는 우리 팀장님!!! 제일 뼈대가 되는 구간을 너무 잘 짜신 것 같아요!!! 도움이 필요하면 언제든지 부르겠습니닷^ㅇ^ 화이팅 팀장님~~ - 묭
+    def normal_attack(self, target):  # 기본 공격
+        print(f"{self.name}의 일반공격!")
+        damage = random.randint(int(self.normal_power * 0.8), int(self.normal_power * 1.2))
+        target.hp -= damage
+        print(f"{target.name}에게 {damage}의 데미지를 입혔습니다.")
+
+        if target.hp <= 0:
+            print(f"{target.name}이 쓰러졌습니다.")
 
     def check_alive(self):
         # 죽었는 지 살았는 지 확인 하는 코드
-        pass
+        if self.hp == 0:
+            self.alive = False
 
-    def attack(self, target):
-        # 기본 공격 코드
-        pass
 
 
 #기호님
@@ -44,15 +53,24 @@ class Monster(Character):
 
 
 # 혜민님
-class Player(Character):
-    def __init__(self, name, character):
-        super().__init__(name)
+class Party(Character):
+    def __init__(self, name, character, mp=100):
+        super().__init__(name, hp=100, normal_power=100)
         self.character = character
+        self.mp = mp
+        self.exp = 0
+        self.level = 1
+
+    def check_alive(self):
+        # 죽었는 지 살았는 지 확인 하는 코드
+        if self.hp <= 0:
+            self.alive = False
 
     def show_choice_character(self):
         print(self.character)
 
-    def item(self):
+    # 혜민님~~~ 여기 파트 엄청 많죠ㅠㅠ 저도 얼른 끝내고 도와 드리러 오겠습니당ㅎㅎㅎㅎ 화이팅 하시고 고민있으면 바로 디엠 고고!! 혜민님 메세지는 바로 달려가서 볼께요^ㅇ^ - 묭
+    def item(self, num):
         # 강철검 : 착용 시 파워 5 증가
         # 갑옷 : 착용 시 HP 50 증가
         # HP 포션 : 획득(사용) 시 HP 전부 회복
@@ -79,7 +97,7 @@ class Player(Character):
 
 # 직업별 캐릭터 -> 부모의 부모인 Character 함수 사용 가능!
 # 딕셔너리나 리스트로 정리해도 괜찮을 듯..? -> 튜터님께 질문!
-class Job(Player):
+class Job(Party):
     # 특수 스킬 공격
     # 영주님
     def skill_attack(self):
@@ -90,12 +108,12 @@ class Job(Player):
 
 # 미영
 # 플레이어 생성
-def create_players():
+def create_party():
     # 이름을 입력
-    users_name = input("플레이어의 닉네임을 정해주세요. \n"
-                        "닉네임 : ")
+    party_name = input("파티 이름을 정해주세요. \n"
+                        "파티 : ")
 
-    return users_name
+    return party_name
 
 
 def select_job(num):
@@ -125,26 +143,25 @@ def select_monster():
 
 
 def select_character():
-    characters = player.character
+    characters = party.character
     print('전투할 캐릭터를 선택해 주세요.')
-    for i in range(len(player.character)):
+    for i in range(len(party.character)):
         print(f"{i+1}.{characters[i]}")
     answer = input("선택한 캐릭터 : ")
     return characters[int(answer)-1]  # 캐릭터 딕셔너리에 키값으로 넣어서 return
 
 
 def show_attack():
-    answer = input("공격을 선택해 주세요."
+    answer = input("공격을 선택해 주세요. \n"
                    "1.일반공격 \n2.스킬공격 \n3.아이템 사용 \n4.스탯 확인 \n")
     if answer == "1":
-        player.attack(monster)
+        party.normal_attack(monster)
     elif answer == "2":
         # 직업별 스킬 사용 코드
         pass
     elif answer == "3":
-        player.item()
+        party.item(1)
     elif answer == "4":
-        player.show_status()
         monster.show_status()
         return show_attack()
     else:
@@ -174,20 +191,19 @@ character_list = {
             }
 
 
-# 플레이어 정의 -> 미영
-player_name = create_players()  # 플레이어 이름
+# 파티 이름 정의 -> 미영
+party_name = create_party()  # 파티이름
 # 플레이 할 캐릭터 수 설정 코드
-play_member = input("사용할 캐릭터 수를 적어 주세요.(최대 5명)\n"
+party_member = input("사용할 캐릭터 수를 적어 주세요.(최대 5명)\n"
                     "answer : ")
-character_job = select_job(int(play_member))  # 캐릭터의 job 설정
-player = Player(player_name, character_job)  # name
-player.show_choice_character()
+character_job = select_job(int(party_member))  # 캐릭터의 job 설정
+print(character_job)
+party = Party(party_name, character_job)  # part 정의 / 파티명, 선택 캐릭 이름 리스트
+party.show_choice_character()  # 선택한 캐릭터를 보여줌
 
 
 # 미영
 while True:
-    # 플레이어의 스탯 확인
-    player.show_status()
     # 몬스터 종류 선택(물, 불, 바람, 돌 중 하나 선택)
     choice_monster = select_monster()
     monster = Monster(choice_monster)
@@ -196,14 +212,18 @@ while True:
     while True:
         # 플레이어 공격할 캐릭터 선택
         choice_character = select_character()
-        attack_choice_character = character_list[choice_character] # choice_character를 key갑으로 사용해 직업 정의
-        attack_choice_character.skill_attack()  # 이게 된다고..?
+        attack_choice_character = character_list[choice_character] # choice_character를 key값으로 사용해 직업 정의
+        # attack_choice_character.skill_attack()  # 이게 된다고..?
         # 플레이어 공격 선택 (일반 공격, 직업별 스킬, 아이템 사용, 스탯 확인(몬스터,플레이어))
         show_attack()  # 플레이어 공격 포함한 함수
         # 몬스터 공격
-        monster.attack(player)
-        player.check_alive()
+        monster.normal_attack(attack_choice_character)  # 유저의 캐릭터들이 모두 피가 0이되면 유저 사망.
+        attack_choice_character.check_alive()
         monster.check_alive()
+        print(party.die_character)
+        # if party.character == party.die_character :
+        #     print("모든 캐릭터가 사망했습니다. 게임을 종료합니다.")
+        #     break
         if monster.hp > 0:
             print("다시 공격하시겠습니까?")
             re_attack = check_answer()
@@ -211,6 +231,7 @@ while True:
                 continue
             else:
                 break
+
     break
 
 
