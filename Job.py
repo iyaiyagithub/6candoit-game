@@ -1,6 +1,8 @@
 import random
-
+# 영주님 벌써 이렇게 많이 작성하시다니....!!!!!!!!!!! 사랑스러워 죽겠어용ㅎㅎㅎㅎㅎ 남은 시간도 화이팅하구!! 잘부탁드려용^ㅇ^ - 묭
 # 직업 - Warrior, Wizard, Archer, Tanker, Healer
+
+# normal_attack은 Player쪽으로! -> MP사용하는 애들은 오버라이딩!
 
 # 일단 워리어만 
 class Warrior(Player):
@@ -41,6 +43,7 @@ class Wizard(Player):
         else:
             print("\n 마나가 부족합니다. \n") 
 
+
 class Archer(Player):
     def __init__(self):
         super().__init__()
@@ -60,6 +63,7 @@ class Archer(Player):
         else:
             print("\n 마나가 부족합니다. \n") 
 
+
 class Tanker(Player):
     def __init__(self):
         super().__init__()
@@ -74,6 +78,7 @@ class Tanker(Player):
             # 탱커 스킬은 광역 버프 (공격력, 방어력 대폭 상승)
         else:
             print("\n 마나가 부족합니다. \n") 
+
 
 class Healer(Player):
     def __init__(self):
