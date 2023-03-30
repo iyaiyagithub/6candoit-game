@@ -7,10 +7,13 @@ import random
 
 class Warrior(Party):
     def __init__(self):
-        super().__init__("전사", 300, 50, 30, 5)
-        # (name="Warrior", character="Warrior",
-        # hp=300, mp=50, normal_power=30, magic_power=5)
-        # 지금 파라미터가 많아서 이름을 명시해주시는 것이 좋을 것 같습니다!!
+        super().__init__()
+        self.name = "전사"
+        self.character = "Warrior"
+        self.hp = 300
+        self.mp = 50
+        self.normal_power = 30
+        self.magic_power = 5
 
     # normal_attack은 Character클래스로 이동
     # 스킬 공격 (광역 공격)
@@ -27,7 +30,13 @@ class Warrior(Party):
 
 class Wizard(Party):
     def __init__(self):
-        super().__init__("마법사", 150, 100, 10, 40)
+        super().__init__()
+        self.name = "마법사"
+        self.character = "Wizard"
+        self.hp = 150
+        self.mp = 100
+        self.normal_power = 10
+        self.magic_power = 40
 
     # normal_attack은 Character클래스로 이동
     # 스킬 공격 (광역 공격)
@@ -45,7 +54,13 @@ class Wizard(Party):
 
 class Archer(Party):
     def __init__(self):
-        super().__init__("궁수", 200, 80, 20, 10)
+        super().__init__()
+        self.name = "궁수"
+        self.character = "Archer"
+        self.hp = 500
+        self.mp = 80
+        self.normal_power = 20
+        self.magic_power = 10
 
     # normal_attack은 Character클래스로 이동
     # 스킬 공격 (광역 공격)
@@ -64,6 +79,13 @@ class Archer(Party):
 
 class Tanker(Party):
     def __init__(self):
+        super().__init__()
+        self.name = "탱커"
+        self.character = "Tanker"
+        self.hp = 500
+        self.mp = 30
+        self.normal_power = 20
+        self.magic_power = 5
         super().__init__("탱커", 500, 30, 20, 5)
 
     # normal_attack은 Character클래스로 이동
@@ -80,6 +102,13 @@ class Tanker(Party):
 
 class Healer(Party):
     def __init__(self):
+        super().__init__()
+        self.name = "치유사"
+        self.character = "Healer"
+        self.hp = 150
+        self.mp = 100
+        self.normal_power = 5
+        self.magic_power = 30
         super().__init__("힐러", 150, 100, 5, 30)
 
     # normal_attack은 Character클래스로 이동
