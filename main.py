@@ -12,9 +12,7 @@ class Character:
         self.hp = max(hp, 0)
         self.mp = mp
         self.normal_power = normal_power
-        self.character = []  # 캐릭터 리스트 -> 유저, 몬스터 둘다 사용 가능??
         self.alive = True
-        self.die_character = []  # 죽은 캐릭터 모음,, -> self.character랑 같아 지면 게임 종료
 
     def show_status(self):
         print(f"{self.name}의 정보 hp : {self.hp} / {self.max_hp}")
@@ -22,10 +20,11 @@ class Character:
 
     # 내가 조아하는 우리 팀장님!!! 제일 뼈대가 되는 구간을 너무 잘 짜신 것 같아요!!! 도움이 필요하면 언제든지 부르겠습니닷^ㅇ^ 화이팅 팀장님~~ - 묭
     def normal_attack(self, target):  # 기본 공격
-        print(f"{self.name}의 일반공격!")
-        damage = random.randint(int(self.normal_power * 0.8), int(self.normal_power * 1.2))
-        target.hp -= damage
-        print(f"{target.name}에게 {damage}의 데미지를 입혔습니다.")
+        if monster.hp > 0:
+            print(f"{self.name}의 일반공격!")
+            damage = random.randint(int(self.normal_power * 0.8), int(self.normal_power * 1.2))
+            target.hp -= damage
+            print(f"{target.name}에게 {damage}의 데미지를 입혔습니다.")
 
         if target.hp <= 0:
             print(f"{target.name}이 쓰러졌습니다.")
@@ -54,12 +53,13 @@ class Monster(Character):
 
 # 혜민님
 class Party(Character):
-    def __init__(self, name, character, mp=100):
-        super().__init__(name, hp=100, normal_power=100)
+    def __init__(self, name, character, mp=100, hp=100):
+        super().__init__(name, normal_power=1)
         self.character = character
         self.mp = mp
         self.exp = 0
         self.level = 1
+        self.hp = hp
 
     def check_alive(self):
         # 죽었는 지 살았는 지 확인 하는 코드
@@ -183,11 +183,11 @@ def check_answer():
 
 
 character_list = {
-    'Warrior': Job(character='Warrior', name="전사"),
-    'Wizard': Job(character='Wizard', name="마법사"),
-    'Archer': Job(character='Archer', name="궁수"),
-    'Tanker': Job(character='Tanker', name="탱커"),
-    'Healer': Job(character='Healer', name="힐러"),
+    'Warrior': Job(character='Warrior', name="Warrior"),
+    'Wizard': Job(character='Wizard', name="Wizard"),
+    'Archer': Job(character='Archer', name="Archer"),
+    'Tanker': Job(character='Tanker', name="Tanker"),
+    'Healer': Job(character='Healer', name="Healer"),
             }
 
 
@@ -198,8 +198,9 @@ party_member = input("사용할 캐릭터 수를 적어 주세요.(최대 5명)\
                     "answer : ")
 character_job = select_job(int(party_member))  # 캐릭터의 job 설정
 print(character_job)
-party = Party(party_name, character_job)  # part 정의 / 파티명, 선택 캐릭 이름 리스트
+party = Party(party_name, character_job, hp=len(character_job))  # part 정의 / 파티명, 선택 캐릭 이름 리스트
 party.show_choice_character()  # 선택한 캐릭터를 보여줌
+print(party.hp)
 
 
 # 미영
@@ -220,7 +221,12 @@ while True:
         monster.normal_attack(attack_choice_character)  # 유저의 캐릭터들이 모두 피가 0이되면 유저 사망.
         attack_choice_character.check_alive()
         monster.check_alive()
-        print(party.die_character)
+        if not attack_choice_character.alive:
+            party.hp -= 1  # 파티의 hp는 캐릭터 수와 같음!
+            party.character.remove(attack_choice_character.name)
+        if party.hp <= 0:
+            print("모든 캐릭터가 사망했습니다.")
+            break
         # if party.character == party.die_character :
         #     print("모든 캐릭터가 사망했습니다. 게임을 종료합니다.")
         #     break
@@ -233,5 +239,3 @@ while True:
                 break
 
     break
-
-
