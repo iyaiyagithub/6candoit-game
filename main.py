@@ -1,6 +1,6 @@
 import random
-import sys
-# import Job as j
+# import sys
+
 
 # 플레이어, 몬스터 부모 클래스
 # 민경님
@@ -53,13 +53,15 @@ class Monster(Character):
 
 # 혜민님
 class Party(Character):
-    def __init__(self, name, character, mp=100, hp=100):
-        super().__init__(name, normal_power=1)
+    def __init__(self, name, character, mp=100, hp=100, normal_power=100, magic_power=5):
+        super().__init__(name)
         self.character = character
         self.mp = mp
         self.exp = 0
         self.level = 1
         self.hp = hp
+        self.normal_power = normal_power
+        self.magic_power = magic_power
 
     def check_alive(self):
         # 죽었는 지 살았는 지 확인 하는 코드
@@ -155,7 +157,7 @@ def show_attack():
     answer = input("공격을 선택해 주세요. \n"
                    "1.일반공격 \n2.스킬공격 \n3.아이템 사용 \n4.스탯 확인 \n")
     if answer == "1":
-        party.normal_attack(monster)
+        attack_choice_character.normal_attack(monster)
     elif answer == "2":
         # 직업별 스킬 사용 코드
         pass
@@ -169,36 +171,45 @@ def show_attack():
         return show_attack()
 
 
-def check_answer():
-    answer = input("1.예 2.아니오 \n"
-                   "선택 : ")
-    if answer == "1":
-        return "success"
-    elif answer == "2":
-        print("게임을 종료합니다.")
-        return "false"
-    else:
-        print("잘못된 선택입니다.")
-        return check_answer()
+def check_answer(num=0):
+    if num == 1:
+        answer = input("파티원 : ")
+        if int(answer) > 5 or int(answer) < 1:
+            print("범위를 벗어났습니다.")
+            return check_answer(1)
+        else:
+            return int(answer)
+    if num == 0:
+        answer = input("1.예 2.아니오 \n"
+                       "선택 : ")
+        if answer == "1":
+            return "success"
+        elif answer == "2":
+            print("게임을 종료합니다.")
+            return "false"
+        else:
+            print("잘못된 선택입니다.")
+            return check_answer()
 
 
 character_list = {
-    'Warrior': Job(character='Warrior', name="Warrior"),
+    'Warrior': Job(character="Warrior", name="Warrior"),
     'Wizard': Job(character='Wizard', name="Wizard"),
     'Archer': Job(character='Archer', name="Archer"),
     'Tanker': Job(character='Tanker', name="Tanker"),
     'Healer': Job(character='Healer', name="Healer"),
             }
 
+game_end = 0  # 안쪽 while문이 break되어 게임을 끝내고 싶을 때 +1
 
 # 파티 이름 정의 -> 미영
 party_name = create_party()  # 파티이름
 # 플레이 할 캐릭터 수 설정 코드
-party_member = input("사용할 캐릭터 수를 적어 주세요.(최대 5명)\n"
-                    "answer : ")
-character_job = select_job(int(party_member))  # 캐릭터의 job 설정
+print("사용할 캐릭터 수를 적어주세요.(최대 5명)")
+party_member = check_answer(1)
+character_job = select_job(party_member)  # 캐릭터의 job 설정
 print(character_job)
-party = Party(party_name, character_job, hp=len(character_job))  # part 정의 / 파티명, 선택 캐릭 이름 리스트
+party = Party(party_name, character_job, hp=int(party_member))  # part 정의 / 파티명, 선택 캐릭 이름 리스트
 party.show_choice_character()  # 선택한 캐릭터를 보여줌
 print(party.hp)
 
@@ -226,6 +237,7 @@ while True:
             party.character.remove(attack_choice_character.name)
         if party.hp <= 0:
             print("모든 캐릭터가 사망했습니다.")
+            game_end = 1
             break
         # if party.character == party.die_character :
         #     print("모든 캐릭터가 사망했습니다. 게임을 종료합니다.")
@@ -236,6 +248,18 @@ while True:
             if re_attack == "success":
                 continue
             else:
+                game_end = 1
                 break
-
-    break
+        else:
+            print("사냥에 성공하셨습니다!")
+            print("다음 단계에 도전 하시겠습니까?")
+            next_level = check_answer()
+            if next_level == "success":
+                party.level += 1
+                print(party.level)
+                break  # 밖의 while문으로 이동
+            else:
+                game_end = 1
+                break
+    if game_end == 1:
+        break
