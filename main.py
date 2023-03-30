@@ -53,12 +53,12 @@ class Monster(Character):
 
 # 혜민님
 class Party(Character):
-    def __init__(self, name, character, mp=100, hp=100, normal_power=100, magic_power=5):
+    def __init__(self, name, character, mp=100, hp=100, normal_power=1, magic_power=5, exp=0, level=1):
         super().__init__(name)
         self.character = character
         self.mp = mp
-        self.exp = 0
-        self.level = 1
+        self.exp = exp
+        self.level = level
         self.hp = hp
         self.normal_power = normal_power
         self.magic_power = magic_power
@@ -73,28 +73,65 @@ class Party(Character):
 
     # 혜민님~~~ 여기 파트 엄청 많죠ㅠㅠ 저도 얼른 끝내고 도와 드리러 오겠습니당ㅎㅎㅎㅎ 화이팅 하시고 고민있으면 바로 디엠 고고!! 혜민님 메세지는 바로 달려가서 볼께요^ㅇ^ - 묭
     def item(self, num):
+        items_dic = {
+            "1": steelsword,
+            "2": armor,
+            "3": hp_portion,
+            "4": mp_portion
+        }
+
+        num = input(
+            "1.steelsword\n"
+            "2.armor\n"
+            "3.hp_portion\n"
+            "4.mp_portion\n"
+            "아이템을 선택해주세요 : ")
+
+        if num not in items_dic.keys():
+            print("올바른 아이템을 선택해주세요.")
+            return self.item()
+
         # 강철검 : 착용 시 파워 5 증가
         # 갑옷 : 착용 시 HP 50 증가
         # HP 포션 : 획득(사용) 시 HP 전부 회복
         # MP 포션 : 획득(사용) 시 MP 전부 회복
-        pass
+
+        # ------이 부분 수정필요-----
 
 
     def success_hunt(self):
+        rewards_success_hunt_dic = {1: recovery_50_hp,
+                                    2: recovery_all_mp,
+                                    3: get_exp,
+                                    4: get_item
+                                    }
+
+        def show_reward():
+            print(rewards_success_hunt_dic[random.randint(1, 4)])
+
+        repeat_function_num = random.randint(1, 4)
+        repeat_function_list = []
+
+        while repeat_function_num - 1 == 0:
+            repeat_function_list.append(show_reward())
+
         # 몬스터 사냥에 성공 시 다음중 하나 또는 전부를 획득 합니다.
         # ex) 체력 50% 회복, 마나 전부 회복, 경험치 획득, 아이템 획득 등
         # 획득한 보상을 바탕으로 플레이어가 강해 지며 스토리에 따라 게임을 진행할 수 있습니다.
-        pass
+
+        # ----이 부분 수정필요 end ----
 
     def level_exp(self):
-        level = 1
-        exp = 0
+        if self.exp >= 100:
+            self.level += 1
+            self.power += 2
+            self.hp = 100
+            self.exp = 0
         # 0 경험치에서 시작
         # 사냥할 때 마다 20씩 획득
         # 100경험치 달성시 레벨업!
         # 레벨업  -> 파워 2 증가, 체력 전부 회복
         # 다시 경험치는 0으로 설정
-        pass
 
 
 # 직업별 캐릭터 -> 부모의 부모인 Character 함수 사용 가능!
@@ -163,6 +200,7 @@ def show_attack():
         pass
     elif answer == "3":
         party.item(1)
+        return show_attack()
     elif answer == "4":
         monster.show_status()
         return show_attack()
@@ -234,14 +272,11 @@ while True:
         monster.check_alive()
         if not attack_choice_character.alive:
             party.hp -= 1  # 파티의 hp는 캐릭터 수와 같음!
-            party.character.remove(attack_choice_character.name)
+            party.character.remove(attack_choice_character.character)
         if party.hp <= 0:
             print("모든 캐릭터가 사망했습니다.")
             game_end = 1
             break
-        # if party.character == party.die_character :
-        #     print("모든 캐릭터가 사망했습니다. 게임을 종료합니다.")
-        #     break
         if monster.hp > 0:
             print("다시 공격하시겠습니까?")
             re_attack = check_answer()
@@ -253,10 +288,10 @@ while True:
         else:
             print("사냥에 성공하셨습니다!")
             print("다음 단계에 도전 하시겠습니까?")
-            next_level = check_answer()
-            if next_level == "success":
-                party.level += 1
-                print(party.level)
+            get_exp = check_answer()
+            if get_exp == "success":
+                party.exp += 20
+                party.level_exp()
                 break  # 밖의 while문으로 이동
             else:
                 game_end = 1
