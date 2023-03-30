@@ -4,11 +4,11 @@ import random
 # 기호님 너무 멋져요!! 코드 너무 좋아요ㅜㅜ 밸런스도 신경 쓰신 거 같아서 너무 완벽합니닷^ㅇ^ 조금만 더 화이팅 해봐용! - 묭
 
 class Character:
-    def __init__(self, name, hp=100, power=1, normal_attack=50):
-        # 이름, hp, power, 일반 공격, 직업
+    def __init__(self, name, hp=100, nomral_power=1, normal_attack=50):
+        # 이름, hp, nomral_power, 일반 공격, 직업
         self.name = name
         self.hp = hp
-        self.power = power
+        self.nomral_power = nomral_power
         self.normal_attack = normal_attack
         self.character = []  # 캐릭터 리스트 -> 유저, 몬스터 둘다 사용 가능??
         self.alive = True
@@ -22,7 +22,7 @@ class Character:
         # 죽었는 지 살았는 지 확인 하는 코드
         pass
 
-    def attack(self, target):
+    def normal_attack(self, target):
         # 기본 공격 코드
         pass
 
@@ -33,12 +33,21 @@ class Character:
 #     if mp < mp_required:
 #         return -1
 
+
+
+
 class Monster(Character):
     # 몬스터 스킬 사용 코드 -> 랜덤을 사용 하거나, mp나 sp도 좋을 듯!
     # 1차 목표 스킬 구현.
     # 가능하면 여러 가지 스킬 구현.
+    #몬스터 스킬의 필요한 mp량 나중에 수정을 쉽게 하기 위해 변수로 추가해 둠.
+    monster_skill_mp = [10, 20, 30] #약공 강공 힐
+
+    
+        
+    
     def __init__(self, game_difficulty, floor_level): #normal attack 제거 job도 일단 제거
-        # 이름, hp, power, 일반 공격, 직업
+        # 이름, hp, nomral_power, 일반 공격, 직업
         # 따로 함수로..고민중!()
         monster_name =''
         named_monster_flag = 0 #네임드 몬스터 결정하는 flag
@@ -71,14 +80,52 @@ class Monster(Character):
         
         self.name = monster_name
         self.hp = monster_total_hp
-        self.power = monster_total_power
+        self.max_hp = monster_total_hp #힐을 언제 할지를 정하기 위해 최대 hp를 선언해둠. 50%이하면 힐할 확률 높게 하려고 함.
+        self.nomral_power = monster_total_power
         # self.normal_attack = normal_attack
         # self.job = job
         self.alive = True
 
     # Character class에 추가 예정!
+    def enough_mp(self, required_mp): #mp가 충분한지 확인하는 함수. 좀 짧게 만드려고 추가.
+        skill_attack_flag = 1
+        if self.mp < required_mp:
+            skill_attack_flag = 0
+        return skill_attack_flag
+
+    def choose_skill(self):
+        possible_skill_list = [0,0,0] #스킬이 사용가능한 상황인지 체크하려고 만듦. + 숫자를 추가해서 확률을 높이려고 함.
+        for index in range(len(Monster.monster_skill_mp)-1):
+            if Monster.enough_mp(self, Monster.monster_skill_mp[index]) == 1:
+                possible_skill_list[index] = 1
+        if (self.hp <= (self.max_hp//2)) and (Monster.enough_mp(self, Monster.monster_skill_mp[2])): #체력이 50%이하 + mp가 충분하면 힐 할 확률 생성
+            possible_skill_list[2] += 1
+        if self.mp >= (Monster.monster_skill_mp[1] * 5) : 
+            possible_skill_list[1] += 2 #mp가 강공보다 5배 많다면 2만큼 확률 추가
+        elif self.mp >= (Monster.monster_skill_mp[1] * 3) : 
+            possible_skill_list[1] += 1 #mp가 강공보다 3배 많다면 1만큼 확률 추가
+        elif self.mp >= (Monster.monster_skill_mp[0] * 5) :
+            possible_skill_list[0] += 2 #mp가 강공보다 3배 많다면 1만큼 확률 추가
+        elif self.mp >= (Monster.monster_skill_mp[0] * 3) :
+            possible_skill_list[0] += 1 #mp가 강공보다 3배 많다면 1만큼 확률 추가
+        
+        total_chance = 0
+        for chance in possible_skill_list:
+            total_chance += chance
+        choose_chance = random.randint(1,total_chance)
+        choose_result = 0 #선택할 스킬
+        for chance in possible_skill_list:
+            choose_result += 1
+            if choose_chance <= chance:
+                break
+            else:
+                choose_chance -= chance
+        return choose_result
+
+        
+
     def normal_attack(self, other):
-        damage = random.randint(self.power - 2, self.power + 2)
+        damage = random.randint(self.nomral_power - 2, self.nomral_power + 2)
         other.hp = max(other.hp - damage, 0)
         print(f"{self.name}의 공격! {other.name}에게 {damage}의 데미지를 입혔습니다.")
         print(f"{other.name}의 남은 체력은 {other.hp}")
@@ -86,10 +133,13 @@ class Monster(Character):
             self.alive = False
             print(f"{other.name}이(가) 쓰러졌습니다.")
 
-    def skill_attack(self, other, skill_type):
-        # 랜덤 추가 고려중!~~~^ㅇ^
+    def skill_attack(self, other):
+        # 랜덤 추가 고려중!~~~^ㅇ^ ##했습니다. :D
+        skill_type = Monster.choose_skill(self)
+
+
         if skill_type == 1: # 1은 약한 스킬 2는 강한 스킬 3은 회복. 3이 획복이라면 함수 이름 변경 필요할 듯.
-            damage = random.randint(self.power, self.power*2+1) #데미지가 power ~ power*2
+            damage = random.randint(self.nomral_power, self.nomral_power*2+1) #데미지가 nomral_power ~ nomral_power*2
             if self.mp < 10:
                 self.normal_attack(other)
             else:
@@ -100,7 +150,7 @@ class Monster(Character):
                     self.alive = False
                     print(f"{other.name}이(가) 쓰러졌습니다.")
         elif skill_type == 2:
-            damage = random.randint(self.power*2, self.power*3+1) #데미지가 power*2 ~ power*3
+            damage = random.randint(self.nomral_power*2, self.nomral_power*3+1) #데미지가 nomral_power*2 ~ nomral_power*3
             if self.mp < 20:
                 self.normal_attack(other)
             else:
@@ -111,7 +161,7 @@ class Monster(Character):
                     self.alive = False
                     print(f"{other.name}이(가) 쓰러졌습니다.")
         elif skill_type == 3:
-            heal = random.randint(self.power//2, self.power+1) #1/2~1만큼 회복
+            heal = random.randint(self.nomral_power//2, self.nomral_power+1) #1/2~1만큼 회복
             if self.mp < 10:
                 self.normal_attack(other)
             else:
