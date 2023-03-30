@@ -4,12 +4,11 @@ import random
 # 기호님 너무 멋져요!! 코드 너무 좋아요ㅜㅜ 밸런스도 신경 쓰신 거 같아서 너무 완벽합니닷^ㅇ^ 조금만 더 화이팅 해봐용! - 묭
 
 class Character:
-    def __init__(self, name, hp=100, nomral_power=1, normal_attack=50):
+    def __init__(self, name, hp=100, normal_power=1):
         # 이름, hp, nomral_power, 일반 공격, 직업
         self.name = name
         self.hp = hp
-        self.nomral_power = nomral_power
-        self.normal_attack = normal_attack
+        self.normal_power = normal_power
         self.character = []  # 캐릭터 리스트 -> 유저, 몬스터 둘다 사용 가능??
         self.alive = True
 
@@ -36,6 +35,8 @@ class Character:
 
 
 
+
+
 class Monster(Character):
     # 몬스터 스킬 사용 코드 -> 랜덤을 사용 하거나, mp나 sp도 좋을 듯!
     # 1차 목표 스킬 구현.
@@ -46,44 +47,15 @@ class Monster(Character):
     
         
     
-    def __init__(self, game_difficulty, floor_level): #normal attack 제거 job도 일단 제거
+    def __init__(self, name, hp, normal_power, mp, magic_power): #normal attack 제거 job도 일단 제거
         # 이름, hp, nomral_power, 일반 공격, 직업
         # 따로 함수로..고민중!()
-        monster_name =''
-        named_monster_flag = 0 #네임드 몬스터 결정하는 flag
-        name_named_monster_list = ['우두머리', '대장']
-        name_first_adjective_list = ['크고','', '작고']
-        name_second_adjective_list = ['강인한','평범한', '나약한', '병든']
-        name_monster_variation_list = ['멧돼지','돼지','닭']
-
-        name_first_adjective_int = random.randrange(0,3)
-        name_second_adjective_int = random.randrange(0,4)
-        name_monster_variation_int = random.randrange(0,3)
         
-        check_named_monster_int = random.randint(0,9)
-        if check_named_monster_int == 0: #1/10 확률로 네임드 몬스터
-            named_monster_flag = 1
-        name_named_monster_int = random.randrange(0,2) 
-        
-        monster_name = name_first_adjective_list[name_first_adjective_int]+' '+name_second_adjective_list[name_second_adjective_int]+' '
-        if named_monster_flag == 1 :
-            monster_name += name_named_monster_list[name_named_monster_int]
-        monster_name += name_monster_variation_list[name_monster_variation_int]
-
-        monster_base_hp = random.randrange(80,121) #몬스터 기본체력
-        monster_add_hp = ((3-name_first_adjective_int)+(4-name_second_adjective_int)+(3-name_monster_variation_int)+floor_level)*10*game_difficulty #이름에 따른 추가 체력. 레벨상승시 lvl*10*난이도
-        monster_total_hp = (monster_base_hp+monster_add_hp)*(named_monster_flag+1) #네임드일 경우 체력 2배
-
-        monster_base_power = random.randrange(8,13) #몬스터 기본파워
-        monster_add_power = ((3-name_first_adjective_int)+(4-name_second_adjective_int)+(3-name_monster_variation_int)+floor_level)*game_difficulty #이름에 따른 추가 파워. 레벨상승시 lvl*난이도
-        monster_total_power = (monster_base_power+monster_add_power)*(named_monster_flag+1) #네임드일 경우 2배의 파워
-        
-        self.name = monster_name
-        self.hp = monster_total_hp
-        self.max_hp = monster_total_hp #힐을 언제 할지를 정하기 위해 최대 hp를 선언해둠. 50%이하면 힐할 확률 높게 하려고 함.
-        self.nomral_power = monster_total_power
+        super().__init__(name, hp, normal_power)
         # self.normal_attack = normal_attack
         # self.job = job
+        self.mp = mp
+        self.magic_power = magic_power
         self.alive = True
 
     # Character class에 추가 예정!
@@ -177,3 +149,52 @@ def monster_group(game_difficulty, floor_level):
     for index in range(number_of_group):
         new_monster = Monster(3,3) #Monster()안에 난이도와 계층 변수 필요.
         group_list.append(new_monster)
+
+def monster_generation(floor_level, game_difficulty):
+    monster_name =''
+    named_monster_flag = 0 #네임드 몬스터 결정하는 flag
+    name_named_monster_list = ['우두머리', '대장']
+    name_first_adjective_list = ['크고','', '작고']
+    name_second_adjective_list = ['강인한','평범한', '나약한', '병든']
+    name_monster_variation_list = ['멧돼지','돼지','닭']
+
+    name_first_adjective_int = random.randrange(0,3)
+    name_second_adjective_int = random.randrange(0,4)
+    name_monster_variation_int = random.randrange(0,3)
+    
+    check_named_monster_int = random.randint(0,9)
+    if check_named_monster_int == 0: #1/10 확률로 네임드 몬스터
+        named_monster_flag = 1
+    name_named_monster_int = random.randrange(0,2) 
+    
+    monster_name = name_first_adjective_list[name_first_adjective_int]+' '+name_second_adjective_list[name_second_adjective_int]+' '
+    if named_monster_flag == 1 :
+        monster_name += name_named_monster_list[name_named_monster_int]
+    monster_name += name_monster_variation_list[name_monster_variation_int]
+
+    monster_base_hp = random.randrange(80,121) #몬스터 기본체력
+    monster_add_hp = ((3-name_first_adjective_int)+(4-name_second_adjective_int)+(3-name_monster_variation_int)+floor_level)*10*game_difficulty #이름에 따른 추가 체력. 레벨상승시 lvl*10*난이도
+    monster_total_hp = (monster_base_hp+monster_add_hp)*(named_monster_flag+1) #네임드일 경우 체력 2배
+
+    monster_base_power = random.randrange(8,13) #몬스터 기본파워
+    monster_add_power = ((3-name_first_adjective_int)+(4-name_second_adjective_int)+(3-name_monster_variation_int)+floor_level)*game_difficulty #이름에 따른 추가 파워. 레벨상승시 lvl*난이도
+    monster_total_power = (monster_base_power+monster_add_power)*(named_monster_flag+1) #네임드일 경우 2배의 파워
+
+
+    #일단은 mp랑 magic_power는 hp랑 normal_power그대로 가져옴.
+    monster_base_mp = random.randrange(80,121) #몬스터 기본mp
+    monster_add_mp = ((3-name_first_adjective_int)+(4-name_second_adjective_int)+(3-name_monster_variation_int)+floor_level)*10*game_difficulty #이름에 따른 추가 체력. 레벨상승시 lvl*10*난이도
+    monster_total_mp = (monster_base_hp+monster_add_mp)*(named_monster_flag+1) #네임드일 경우 체력 2배
+
+    monster_base_magic_power = random.randrange(8,13) #몬스터 기본파워
+    monster_add_magic_power = ((3-name_first_adjective_int)+(4-name_second_adjective_int)+(3-name_monster_variation_int)+floor_level)*game_difficulty #이름에 따른 추가 파워. 레벨상승시 lvl*난이도
+    monster_total_magic_power = (monster_base_magic_power+monster_add_magic_power)*(named_monster_flag+1) #네임드일 경우 2배의 파워    
+
+    return Monster(monster_name, monster_total_hp, monster_total_power, monster_total_mp, monster_total_magic_power)
+
+newMonster = monster_generation(1,1)
+print(newMonster.name)
+print(newMonster.hp)
+print(newMonster.mp)
+print(newMonster.normal_power)
+print(newMonster.magic_power)
