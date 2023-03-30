@@ -26,12 +26,12 @@ class Warrior(Party):
 
     # normal_attack은 Character클래스로 이동
     # 스킬 공격 (광역 공격)
-    def magic_attack(self, party):
+    def magic_attack(self, monster_list):
         magic_damage = random.randint(self.magic_power - 4, self.magic_power + 4)
         # 전사의 스킬공격 power기반으로 할까요 matic_power기반으로 할까요??
         if self.mp >= 10:
             self.mp = max(self.mp - 10, 0)  # 스킬공격은 마나를 소모함
-            for monster in monster_list:
+            for monsters in monster_list:
                 monster.hp = max(monster.hp - magic_damage, 0)
             print(f"\n {party.name}의 휠윈드! mp 10을 소모해 {len(monster_list)}마리의 몬스터에게 각각 {magic_damage}의 데미지를 입혔습니다!\n ")
         else:
@@ -44,12 +44,12 @@ class Wizard(Party):
 
     # normal_attack은 Character클래스로 이동
     # 스킬 공격 (광역 공격)
-    def magic_attack(self, party):
+    def magic_attack(self, monster_list):
         magic_damage = random.randint(self.magic_power - 4, self.magic_power + 4)
         # 스킬공격
         if self.mp >= 10:
             self.mp = max(self.mp - 10, 0)  # 스킬공격은 마나를 소모함
-            for monster in monster_list:
+            for monsters in monster_list:
                 monster.hp = max(monster.hp - magic_damage, 0)
             print(f"\n {party.name}의 메테오! mp 10을 소모해 {len(monster_list)}마리의 몬스터에게 각각 {magic_damage}의 데미지를 입혔습니다!\n ")
         else:
@@ -62,12 +62,12 @@ class Archer(Party):
 
     # normal_attack은 Character클래스로 이동
     # 스킬 공격 (광역 공격)
-    def magic_attack(self, party):
+    def magic_attack(self, monster_list):
         magic_damage = random.randint(self.magic_power - 4, self.magic_power + 4)
         # 스킬공격
         if self.mp >= 10:
             self.mp = max(self.mp - 10, 0)  # 스킬공격은 마나를 소모함
-            for monster in monster_list:
+            for monsters in monster_list:
                 monster.hp = max(monster.hp - magic_damage, 0)
             print(
                 f"\n {party.name}의 화살엄청많이쏘기! mp 10을 소모해 {len(monster_list)}마리의 몬스터에게 각각 {magic_damage}의 데미지를 입혔습니다!\n ")
