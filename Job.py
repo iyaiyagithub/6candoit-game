@@ -8,6 +8,9 @@ import random
 class Warrior(Party):
     def __init__(self):
         super().__init__("전사", 300, 50, 30, 5)
+        # (name="Warrior", character="Warrior",
+        # hp=300, mp=50, normal_power=30, magic_power=5)
+        # 지금 파라미터가 많아서 이름을 명시해주시는 것이 좋을 것 같습니다!!
 
     # normal_attack은 Character클래스로 이동
     # 스킬 공격 (광역 공격)
