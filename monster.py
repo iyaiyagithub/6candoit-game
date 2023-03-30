@@ -47,7 +47,7 @@ class Monster(Character):
     
         
     
-    def __init__(self, name, hp, normal_power, mp, magic_power): #normal attack 제거 job도 일단 제거
+    def __init__(self, name, hp, normal_power, mp, magic_power, xp): #normal attack 제거 job도 일단 제거
         # 이름, hp, nomral_power, 일반 공격, 직업
         # 따로 함수로..고민중!()
         
@@ -56,6 +56,7 @@ class Monster(Character):
         # self.job = job
         self.mp = mp
         self.magic_power = magic_power
+        self.xp = xp
         self.alive = True
 
     # Character class에 추가 예정!
@@ -139,6 +140,17 @@ class Monster(Character):
             else:
                 self.hp += heal
                 print(f"{self.name}이 {heal}만큼 회복해 hp가 {self.hp}가 되었다!")
+
+'''
+그냥 간단히 만들어만 놓은 몬스터 사냥시 보상 함수.
+    def monster_die_reward(self, other, item): #턴 함수에서 hp가 0이되면 이 함수를 넣어주면 좋을듯
+        other.xp += self.xp #경험치 추가
+        if self.alive == False:
+            if random.randint(1,10)%10 == 0:
+                other.item = item
+'''
+        
+
 #몬스터를 그룹화 해서 묶어주기. 아마 리스트나 딕셔너리로 구현하게 될 것 같음.
 #Monster 클래스는 단일 몬스터의 객체로 남겨두려고 함.
 #그래서 따로 그룹을 형성하는 함수를 만들려고 함.
@@ -190,7 +202,11 @@ def monster_generation(floor_level, game_difficulty):
     monster_add_magic_power = ((3-name_first_adjective_int)+(4-name_second_adjective_int)+(3-name_monster_variation_int)+floor_level)*game_difficulty #이름에 따른 추가 파워. 레벨상승시 lvl*난이도
     monster_total_magic_power = (monster_base_magic_power+monster_add_magic_power)*(named_monster_flag+1) #네임드일 경우 2배의 파워    
 
-    return Monster(monster_name, monster_total_hp, monster_total_power, monster_total_mp, monster_total_magic_power)
+    monster_base_xp = random.randrange(8,13) #몬스터 기본파워
+    monster_add_xp = ((3-name_first_adjective_int)+(4-name_second_adjective_int)+(3-name_monster_variation_int)+floor_level)*game_difficulty #이름에 따른 추가 파워. 레벨상승시 lvl*난이도
+    monster_total_xp = (monster_base_xp+monster_add_xp)*(named_monster_flag+1) #네임드일 경우 2배의 파워    
+
+    return Monster(monster_name, monster_total_hp, monster_total_power, monster_total_mp, monster_total_magic_power, monster_total_xp)
 
 newMonster = monster_generation(1,1)
 print(newMonster.name)
