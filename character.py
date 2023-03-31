@@ -6,9 +6,7 @@ B = "\033[94m"
 W = "\033[0m"
 G = "\033[92m"
 M = "\033[95m"
-
 YB = "\033[103m"
-
 
 # 플레이어, 몬스터 부모 클래스
 # 민경님
@@ -23,8 +21,10 @@ class Character:
         self.alive = True
 
     def show_status(self):
+        print("\n---------------------------스탯-----------------------------")
         print(f":::{G} {self.name}의 정보{W} {R}HP:{self.hp}/{self.max_hp}  MP:{self.mp}{W}")
         print(f":::[물리공격력]: {self.normal_power} [마법 공격력]: {self.magic_power}")
+        print("-------------------------------------------------------------\n")
         return ""
 
     # 내가 조아하는 우리 팀장님!!! 제일 뼈대가 되는 구간을 너무 잘 짜신 것 같아요!!! 도움이 필요하면 언제든지 부르겠습니닷^ㅇ^ 화이팅 팀장님~~ - 묭
@@ -73,48 +73,14 @@ class Party(Character):
     def show_choice_character(self):
         print(self.character)
     
-
-        
-        # rewards_dic_value = rewards_success_hunt_dic[random.randint(1,4)]
-        # print(rewards_dic_value)
-        # random_num = random.randint(1,4)
-        # def reward_chance(num):
-
-        #     while True:
-        #         if random_num - 1 > 0 :
-        #             return rewards_dic_value
-        #         else random_num - 1 > 0 :
-        #             return rewards_dic_value
-        #         else random_num - 1 > 0 :
-        #             return rewards_dic_value
-        #         else:
-        #             break
-            # if rewards_dic_value == 1:
-            #     pass
-            # elif rewards_dic_value == 2:
-            #     pass
-
-            # elif rewards_dic_value ==3:
-            #     pass
-            # elif rewards_dic_value ==4:
-            #     pass
-
-        
-            # # if 100%num == : # 이러면 대략 100/num 확률로 아래 함수를 실행할 수 있습니다.
-            # #     #어떤 함수 실행
-                # return 
-
-
-    def level_exp(self):
+    def level_exp(self, character_list):
         if self.exp == 100:
             print(f"{YB}!!**!!**!!**!!** 레 벨 업 **!!**!!**!!**!!{W}")
-            print(f"플레이어의 레벨이 {self.level}이 되었습니다!!")
+            for i in character_list:
+                i.hp = i.max_hp
             self.level += 1
             self.exp = 0
-            # for i in self.character:
-            #     i.hp = i.max_hp
-            #     print(i.hp)
-            #     i.normal_power += 10
+            print(f"플레이어의 레벨이 {self.level}이 되었습니다!!")
         # 0 경험치에서 시작
         # 사냥할 때 마다 20씩 획득
         # 100경험치 달성시 레벨업!
@@ -144,10 +110,8 @@ def mp_portion(item_character):
     print(f"{YB}마나가 10!! 증가했습니다.{W}")
 
 
-
 def success_hunt_items(party_list):
         num_select = random.randint(1,4)
-        print(party_list)
         if num_select == 1 : ##팀 리스트를 받아야 할 거 같음.
             print(f"{YB}모든 캐릭터 최대 체력 100 상승!{W}")
             for party_member in party_list:
@@ -170,36 +134,6 @@ def success_hunt_items(party_list):
             for party_member in party_list:
                 party_member.magic_power += 10
                 party_member.show_status()
-
-
-# items--------end-------------------
-
-# success_hunt_items-----------
-# def recovery_50_hp(party_list):
-#     party_list.max_hp += 100
-            
-
-# def recovery_all_mp(party_member):
-#     party_member.mp += 10
-            
-
-# def get_exp(item_character):
-#     item_character.exp += 20
-            
-# def get_item(item_character):
-#     num = random.randint(1,4)
-    
-#     if num == 1:
-#         steelsword(item_character)
-#     elif num == 2:
-#         armor(item_character)
-#     elif num == 3:
-#         hp_portion(item_character)
-#     elif num == 4:
-#         mp_portion(item_character)
-    
-# success_hunt_items---end-----
-
 
 
 #### ------------------------Monster 시작
@@ -275,7 +209,7 @@ class Monster(Character):
                 self.normal_attack(other)
             else:
                 other.hp = max(other.hp - damage, 0)
-                print(f"{YB}{self.name}의 몸!통!박!치!기! {other.name}에게 {damage}의 데미지를 입혔습니다.{W}")  # 쉬발쉬발 -팀장왈 진정하세요 팀장님 -팀원A
+                print(f"{YB}{self.name}의 몸!통!박!치!기! {other.name}에게 {damage}의 데미지를 입혔습니다.{W}")  # 쉬발쉬발 -팀장왈 진정하세요 팀장님 -팀원A 팀장님~컴다운~=묭
                 print(f"{M}{other.name}의 남은 체력은 {other.hp}{W}")
                 if other.hp == 0:
                     self.alive = False
@@ -300,24 +234,6 @@ class Monster(Character):
                 self.hp += heal
                 print(f"{YB}{self.name}이 {heal}만큼 회복해 hp가 {self.hp}가 되었다!{W}")
 
-
-'''
-그냥 간단히 만들어만 놓은 몬스터 사냥시 보상 함수.
-    def monster_die_reward(self, other, item): #턴 함수에서 hp가 0이되면 이 함수를 넣어주면 좋을듯
-        other.xp += self.xp #경험치 추가
-        if self.alive == False:
-            if random.randint(1,10)%10 == 0:
-                other.item = item
-    #제거된 몬스터 normal_attack
-    def normal_attack(self, other):
-        damage = random.randint(self.nomral_power - 2, self.nomral_power + 2)
-        other.hp = max(other.hp - damage, 0)
-        print(f"{self.name}의 공격! {other.name}에게 {damage}의 데미지를 입혔습니다.")
-        print(f"{other.name}의 남은 체력은 {other.hp}")
-        if other.hp == 0:
-            self.alive = False
-            print(f"{other.name}이(가) 쓰러졌습니다.")
-'''
 
 # 몬스터를 그룹화 해서 묶어주기. 아마 리스트나 딕셔너리로 구현하게 될 것 같음.
 # Monster 클래스는 단일 몬스터의 객체로 남겨두려고 함.
@@ -380,7 +296,7 @@ def monster_generation(floor_level, game_difficulty):  # 몬스터 인자 생성
     monster_total_xp = (monster_base_xp + monster_add_xp) * (named_monster_flag + 1)  # 네임드일 경우 2배의 파워
     # , monster_total_xp
     return Monster(monster_name, monster_total_hp, monster_total_power, monster_total_mp,
-                   monster_total_magic_power, monster_total_xp)  # name, hp=100, normal_power=100, mp=50
+                    monster_total_magic_power, monster_total_xp)  # name, hp=100, normal_power=100, mp=50
 
 
 def monster_group():  # 몬스터 리스트 생성
@@ -478,42 +394,3 @@ class Healer(Party):
         else:
             print(f"\n{R}마나가 부족합니다.{W}\n")
 
-# ----------테스트용 임시 몬스터 클래스---------
-
-# class Monster:
-
-#     def __init__(self, name, hp, power):
-#         self.name = name
-#         self.hp = hp
-#         self.max_hp = hp
-#         self.power = power
-
-#     def monster_status(self):
-#         monster_max_hp = self.max_hp
-#         print(f"""
-#         {self.name}의 현재 상태창:
-#         <HP> {self.hp} / {monster_max_hp}
-#         <힘> {self.power}""")
-
-#     def __str__(self):
-#         return self.name
-
-#     def monster_attack(self):
-#         monster_damage = random.randint(self.power - 2, self.power + 2)
-#         player.hp = max(player.hp - monster_damage, 0)
-#         print(f"\n {self.name}의 공격! {monster_damage}의 데미지를 입었습니다!")
-#         if player.hp == 0:
-#             print(f"\n {player.name}이(가) 쓰러졌습니다. 전투 패배...\n")
-
-
-# # -------TEST----
-# player = Warrior()
-# monster_list = [Monster("고블린", 100, 10), Monster("트롤", 200, 20)]
-# monster = random.choice(monster_list)
-
-# player.normal_attack()
-# player.skill_attack()
-# monster.monster_status()
-
-
-#### ---------------------------------------------------------Job 끝

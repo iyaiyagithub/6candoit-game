@@ -1,6 +1,5 @@
 import character as ch
 import random
-
 # import sys
 # 출력 색상 변경
 R = "\033[91m"
@@ -11,80 +10,70 @@ M = "\033[95m"
 
 YB = "\033[103m"
 
-
-'''
-# 타입 체크하는 함수
-def check_type(required_type, input_type):
-    if required_type != input_type:
-        print('잘못된 타입을 입력하셨습니다. 다시 입력해 주세요.')
-        # 재입력하는 함수 필요.
-        return True
-    else:
-        # 통과했으니 그냥 그대로 가게 하면 될듯.
-        return False
-'''
-
 # 미영
 # 플레이어 생성
 def create_party():
     # 이름을 입력
     #이렇게 하면 {B}뒷부분이 파란색이 되구요. {W} 이거는 하얀색이d에요. 그니까 흰색으로 다시 되돌려주려면 {W}를 쓰면돼용
-    party_name = input(f"{B}파티 이름을 정해주세요. {W}\n"
+    party_name = input(f"\n{B}파티 이름을 정해주세요. {W}\n"
                         f"파티 : ")
 
     return party_name
 
-
 def select_job(num):
     # 직업 리스트 작성
-    job_list = ["Archer", "Warrior", "Wizard", "Healer", "Tanker"]
+    job_list = ["Warrior", "Wizard", "Archer", "Tanker", "Healer"]
     choice_job = []
+    while True: #오류안나게 하는 코드
+        try: 
+            if int(num) > 5 or int(num) < 1:
+                print(f"{R}범위를 벗어났습니다.{W}")
+                num = input()
+            else:
+                break
+
+        except ValueError:
+            print(f'{R}숫자를 입력하셔야 합니다.{W}')
+            num = input()
     for i in range(num):
         # 직업 리스트에서 직업을 고르기
-        character_jobs = input(f"{B}{i + 1}번째 캐릭터의 직업을 선택해주세요. {W}\n"
-                                f"1.Archer 2.Warrior 3.Wizard 4.Healer 5.Tanker{W} \n"
+        character_jobs = input(f"\n{B}{i + 1}번째 캐릭터의 직업을 선택해주세요. {W}\n"
+                                f"1.Warrior 2.Wizard 3.Archer 4.Tanker 5.Healer{W} \n"
                                 f"직업(숫자) : ")
         if job_list[int(character_jobs) - 1] in choice_job:
-            print("{R}이미 선택한 캐릭터 입니다! \n 처음부터 다시 선택해주세요!{W}")  # 지금은 처음부터 다시 시작이지만 후에 수정예정
+            print(f"{R}이미 선택한 캐릭터 입니다! \n 처음부터 다시 선택해주세요!{W}")  # 지금은 처음부터 다시 시작이지만 후에 수정예정
             return select_job(num)
         else:
             choice_job.append(job_list[int(character_jobs) - 1])
-    choice_job.sort()
     return choice_job
-
-
-# def select_monster():
-#     ch.
-#     monster_style = ['몬스터(물)', '몬스터(불)', '몬스터(바람)', '몬스터(돌)']
-#     answer = input("상대할 몬스터의 속성을 선택해 주세요. \n"
-#                    "1.물, 2.불 3.바람 4.돌 \n"
-#                    "선택 번호 : ")
-#     return monster_style[int(answer) - 1]
-
 
 def select_character():
     characters = party.character
-    print(f'{B}캐릭터를 선택해 주세요.{W}')
+    print(characters)
+    print(f'\n{B}캐릭터를 선택해 주세요.{W}')
     for i in range(len(party.character)):
         print(f"{i + 1}.{characters[i]}")
+    
     answer = input(f"선택한 캐릭터 : ")
+    while True: #오류수정 코드
+        try:
+            if int(answer) > 5 or int(answer) < 1:
+                print(f"{R}범위를 벗어났습니다.{W}")
+                return select_character()
+            else:
+                break
+
+        except ValueError:
+            print(f'\n{R}숫자를 입력하셔야 합니다.{W}\n')
+            answer = input()
     return characters[int(answer) - 1]  # 캐릭터 딕셔너리에 키값으로 넣어서 return
-
-
-#  items_dic = {
-#             "1": steelsword(item_character), #지금 steelsword(함수가 실행된 거 같습니다.)
-#             "2": armor(item_character),
-#             "3": hp_portion(item_character),
-#             "4": mp_portion(item_character)
-#         }
 
 def show_attack():
     test = []
     for i in party.character:  #["Warrior", "Archer"]
         test.append(character_list[i])
-    answer = input(f"{B}공격을 선택해 주세요. {W}\n"
-                    f"1.일반공격 \n2.스킬공격 \n3.아이템 사용 \n4.스탯 확인 \n ")
-    print(monster)
+    answer = input(f"\n{B}공격을 선택해 주세요. {W}\n"
+                    f"1.일반공격 \n2.스킬공격 \n3.아이템 사용 \n4.스탯 확인 \n 선택 번호 :  ")
     if answer == "1":
         attack_choice_character.normal_attack(monster_list[0])
     elif answer == "2":
@@ -93,10 +82,10 @@ def show_attack():
     elif answer == "3":
         while(True): #문자 입력해도 안 튕기게.
             select_item = input(
-                        f"1.steelsword\n"
-                        f"2.armor\n"
-                        f"3.hp_portion\n"
-                        f"4.mp_portion\n"
+                        f"\n1.steelsword (공격력 증가)\n"
+                        f"2.armor (방어력 증가)\n"
+                        f"3.hp_portion (HP 회복)\n"
+                        f"4.mp_portion (MP 회복)\n\n"
                         f"{B}아이템을 선택해주세요 : {W}")
             try:
                 select_item = int(select_item)
@@ -116,7 +105,7 @@ def show_attack():
         monster.show_status()
         return show_attack()
     else:
-        print(f"{R}잘못된 입력입니다.{W}")
+        print(f"\n{R}잘못된 입력입니다.{W}\n")
         return show_attack()
 
 
@@ -127,12 +116,12 @@ def check_answer(num=0):
             answer = input("파티원 : ")
             try:
                 if int(answer) > 5 or int(answer) < 1:
-                    print(f"{R}범위를 벗어났습니다.{W}")
+                    print(f"\n{R}범위를 벗어났습니다.{W}\n")
                     return check_answer(1)
                 else:
                     return int(answer)
             except ValueError:
-                print(f'{R}숫자를 입력하셔야 합니다.{W}')
+                print(f'\n{R}숫자를 입력하셔야 합니다.{W}\n')
                 
     elif num == 0:
         answer = input("1.예 2.아니오 \n"
@@ -143,11 +132,8 @@ def check_answer(num=0):
             print(f"{R}게임을 종료합니다.{W}")
             return "false"
         else:
-            print(f"{R}잘못된 선택입니다.{W}")
+            print(f"\n{R}잘못된 선택입니다.{W}\n")
             return check_answer()
-
-
-
 
 character_list = {
     'Warrior': ch.Warrior(name="Warrior", character="Warrior", hp=300, mp=50, normal_power=30, magic_power=20),
@@ -164,17 +150,15 @@ monster_list = ch.monster_group()
 # 파티 이름 정의 -> 미영
 party_name = create_party()  # 파티이름
 # 플레이 할 캐릭터 수 설정 코드
-print(f"{B}사용할 캐릭터 수를 적어주세요.(최대 5명){W}")
+print(f"\n{B}사용할 캐릭터 수를 적어주세요.(최대 5명){W}")
 party_member = check_answer(1)
 character_job = select_job(party_member)  # 캐릭터의 job 설정
 party = ch.Party(party_name, character=character_job, hp=int(party_member),mp=1,normal_power=1,magic_power=1)  # part 정의 / 파티명, 선택 캐릭 이름 리스트
 party.show_choice_character()  # 선택한 캐릭터를 보여줌
-# party.success_hunt_items(party) + character_list
 # 미영
 while True:
     if game_end == 1:
         break
-    # 몬스터 종류 선택(물, 불, 바람, 돌 중 하나 선택)
     # choice_monster = select_monster()
     # monster = ch.Monster(choice_monster)
     monster = ch.monster_generation(3, 3)
@@ -188,18 +172,17 @@ while True:
             monster_list = ch.monster_group()
             get_exp = check_answer()
             if get_exp == "success":
-                party.exp += 100
-                check_level = party.level_exp()
                 test = []
                 for i in party.character:  #["Warrior", "Archer"]
                     test.append(character_list[i])
+                party.exp += 50
+                check_level = party.level_exp(test)
                 ch.success_hunt_items(test) 
             else:
                 game_end = 1
                 break
         choice_character = select_character()
         attack_choice_character = character_list[choice_character]  # choice_character를 key값으로 사용해 직업 정의
-
         # attack_choice_character.skill_attack()  # 이게 된다고..?
         # 플레이어 공격 선택 (일반 공격, 직업별 스킬, 아이템 사용, 스탯 확인(몬스터,플레이어))
         show_attack()  # 플레이어 공격 포함한 함수
@@ -218,10 +201,15 @@ while True:
         remember_size = len(monster_list)
         remember_index = 0
         try:
-            for index in range(remember_size): # 광역공격 받아서 다 죽으면 다 지워버릴 수 있게 바꿔봄. 될지는 미지수. # 만약에 monster_list에 있는게 삭제가 되면 for는 그 삭제된 이후걸 불러오나 아니면 그 이후이후걸 불러오나? index상으로는 그 이후이후여야 함. #for 안의 수는 변하지 않는다는 걸 배움.
+            alive_monster =[]
+            for index in range(remember_size): # for 로 돌리는게 잘 안돼서 죽은 애들을 표시하고 살아있는 애들을 새 리스트에 추가하고 원래 리스트에 덮어씌움.
                 if monster_list[index].hp <= 0:
-                    remember_index += 1
-                    monster_list.remove(monster_list[index])
+                        monster_list[index].alive = False
+            for index in range(remember_size):
+                if monster_list[index].alive == True:
+                    alive_monster.append(monster_list[index])
+                        # monster_list.remove(monster_list[index])
+            monster_list = alive_monster
         except:
             new_remember_index = 0
             for index in range(remember_size-remember_index): # 광역공격 받아서 다 죽으면 다 지워버릴 수 있게 바꿔봄. 될지는 미지수. # 만약에 monster_list에 있는게 삭제가 되면 for는 그 삭제된 이후걸 불러오나 아니면 그 이후이후걸 불러오나? index상으로는 그 이후이후여야 함.
@@ -237,34 +225,11 @@ while True:
             print(f"{YB}모든 캐릭터가 사망했습니다.{W}")
             game_end = 1
             break
-        # if party.character == party.die_character :
-        #     print("모든 캐릭터가 사망했습니다. 게임을 종료합니다.")
-        #     break
         if len(monster_list) > 0:
-            print(f"다시 공격하시겠습니까?")
+            print(f"\n다시 공격하시겠습니까?\n")
             re_attack = check_answer()
             if re_attack == "success":
                 continue
             else:
                 game_end = 1
                 break
-
-
-'''
-def check_type(required_type, input_type):
-    if required_type != input_type:
-        print('잘못된 타입을 입력하셨습니다. 다시 입력해 주세요.')
-        # 재입력하는 함수 필요. 
-        return False
-    else:
-        #통과했으니 그냥 그대로 가게 하면 될듯.
-        return True
-
-do{
-
-    }
-while(check_type(변수1, 변수2))
-
-# True or False로 해서 True가 될 때까지 반복문 돌려도 될 것 같음.
-
-'''
